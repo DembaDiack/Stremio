@@ -1,3 +1,9 @@
+## [1.0.0-dev.4](https://github.com/DembaDiack/Stremio/compare/v1.0.0-dev.3...v1.0.0-dev.4) (2026-09-22)
+
+### 🐛 Bug Fixes
+
+* downmix every channel count and remove floating overlay ([26dcf47](https://github.com/DembaDiack/Stremio/commit/26dcf47cd6c0fba00cdef5c6f9e302138a322f81))
+
 ## [1.0.0-dev.3](https://github.com/DembaDiack/Stremio/compare/v1.0.0-dev.2...v1.0.0-dev.3) (2026-09-22)
 
 ### 🐛 Bug Fixes
