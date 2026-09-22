@@ -24,7 +24,7 @@ public final class DownmixRenderersFactory extends CustomRenderersFactory {
 
         return new DefaultAudioSink.Builder(context)
                 .setEnableFloatOutput(enableFloatOutput)
-                .setEnableAudioOutputPlaybackParameters(enableAudioTrackPlaybackParams)
+                .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
                 .setAudioProcessors(new AudioProcessor[] { processor })
                 .build();
     }
