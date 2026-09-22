@@ -49,7 +49,7 @@ The 2024 Google TV Streamer exposes 32-bit ARM app support, so use Stremio's `ar
 ## Available patches
 
 <!-- PATCHES_START EXPANDED -->
-> **[v1.0.0-dev.2](https://github.com/DembaDiack/Stremio/releases/tag/v1.0.0-dev.2)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;4 patches total
+> **[v1.0.0-dev.3](https://github.com/DembaDiack/Stremio/releases/tag/v1.0.0-dev.3)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;4 patches total
 <details open>
 <summary>📦 Stremio Android TV&nbsp;&nbsp;•&nbsp;&nbsp;4 patches</summary>
 <br>

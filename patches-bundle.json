@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-09-22T22:40:15",
-  "description": "## [1.0.0-dev.2](https://github.com/DembaDiack/Stremio/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2026-09-22)\n\n### ✨ New Features\n\n* add runtime downmix settings with in-app toggle ([b50f8ab](https://github.com/DembaDiack/Stremio/commit/b50f8ab20abdaf7c0d7e9e2158c49c2d36e3aa1c))",
-  "download_url": "https://github.com/DembaDiack/Stremio/releases/download/v1.0.0-dev.2/patches-1.0.0-dev.2.mpp",
+  "created_at": "2026-09-22T22:51:44",
+  "description": "## [1.0.0-dev.3](https://github.com/DembaDiack/Stremio/compare/v1.0.0-dev.2...v1.0.0-dev.3) (2026-09-22)\n\n### 🐛 Bug Fixes\n\n* pass audio processors as an array to media3 builder ([fc95308](https://github.com/DembaDiack/Stremio/commit/fc953080183d16f229f07c8f84cee77dbece9895))\n* stop subclassing final CustomRenderersFactory in downmix patch ([d9bfe79](https://github.com/DembaDiack/Stremio/commit/d9bfe795df00318f87e829530fd31e611136e7dc))",
+  "download_url": "https://github.com/DembaDiack/Stremio/releases/download/v1.0.0-dev.3/patches-1.0.0-dev.3.mpp",
   "signature_download_url": "",
-  "version": "1.0.0-dev.2"
+  "version": "1.0.0-dev.3"
 }

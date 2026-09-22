@@ -1,3 +1,10 @@
+## [1.0.0-dev.3](https://github.com/DembaDiack/Stremio/compare/v1.0.0-dev.2...v1.0.0-dev.3) (2026-09-22)
+
+### 🐛 Bug Fixes
+
+* pass audio processors as an array to media3 builder ([fc95308](https://github.com/DembaDiack/Stremio/commit/fc953080183d16f229f07c8f84cee77dbece9895))
+* stop subclassing final CustomRenderersFactory in downmix patch ([d9bfe79](https://github.com/DembaDiack/Stremio/commit/d9bfe795df00318f87e829530fd31e611136e7dc))
+
 ## [1.0.0-dev.2](https://github.com/DembaDiack/Stremio/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2026-09-22)
 
 ### ✨ New Features
