@@ -17,7 +17,6 @@ private val downmixSettingsResourcePatch = resourcePatch {
 
     execute {
         document("AndroidManifest.xml").use(::transformManifest)
-        document("res/layout/activity_main.xml").use(::transformMainLayout)
     }
 }
 
@@ -92,16 +91,5 @@ private fun transformManifest(document: Document) {
         setAttribute("android:exported", "false")
         setAttribute("android:screenOrientation", "landscape")
         setAttribute("android:theme", "@android:style/Theme.Material.NoActionBar")
-    })
-}
-
-private fun transformMainLayout(document: Document) {
-    val root = document.documentElement ?: return
-    root.appendChild(document.createElement("com.stremio.morphe.MorpheDownmixNavView").apply {
-        setAttribute("android:layout_width", "160dp")
-        setAttribute("android:layout_height", "48dp")
-        setAttribute("android:layout_gravity", "start|top")
-        setAttribute("android:layout_marginStart", "20dp")
-        setAttribute("android:layout_marginTop", "140dp")
     })
 }

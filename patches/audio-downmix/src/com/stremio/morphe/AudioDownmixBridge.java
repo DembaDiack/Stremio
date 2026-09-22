@@ -17,7 +17,7 @@ public final class AudioDownmixBridge {
     private static final String KEY_CENTER_BOOST_DB = "center_boost_db";
 
     private static final float SURROUND_MIX = 0.707107f;
-    private static final int DEFAULT_CENTER_BOOST_DB = 20;
+    private static final int DEFAULT_CENTER_BOOST_DB = 6;
 
     private static Context appContext;
 
@@ -63,10 +63,26 @@ public final class AudioDownmixBridge {
         ChannelMixingAudioProcessor processor = new ChannelMixingAudioProcessor();
         float centerMix = SURROUND_MIX * dbToLinear(centerBoostDb);
 
-        processor.putChannelMixingMatrix(buildMatrix(6, centerMix, SURROUND_MIX));
-        processor.putChannelMixingMatrix(buildMatrix(8, centerMix, SURROUND_MIX));
+        // Mono -> stereo (constant gain). Without a matrix the processor throws
+        // UnhandledAudioFormatException for single-channel sources.
+        processor.putChannelMixingMatrix(new ChannelMixingMatrix(1, 2, new float[] { 1f, 1f }));
+        // Stereo -> identity. onConfigure returns NOT_SET for an identity matrix,
+        // so the processor is bypassed and already-stereo content plays untouched.
+        processor.putChannelMixingMatrix(identityMatrix(2));
+        // Multichannel -> stereo downmix with a boosted center channel.
+        for (int channels = 3; channels <= 8; channels++) {
+            processor.putChannelMixingMatrix(buildMatrix(channels, centerMix, SURROUND_MIX));
+        }
 
         return processor;
+    }
+
+    private static ChannelMixingMatrix identityMatrix(int channels) {
+        float[] coefficients = new float[channels * channels];
+        for (int i = 0; i < channels; i++) {
+            coefficients[i * channels + i] = 1f;
+        }
+        return new ChannelMixingMatrix(channels, channels, coefficients);
     }
 
     /**
@@ -104,43 +120,36 @@ public final class AudioDownmixBridge {
             float centerMix,
             float surroundMix
     ) {
+        // Coefficients are laid out column-major in this media3 build:
+        // coefficients[inputChannel * outputChannelCount + outputChannel].
         float[] coefficients = new float[inputChannelCount * 2];
 
-        for (int input = 0; input < inputChannelCount; input++) {
-            int base = input * 2;
-            coefficients[base] = 0f;
-            coefficients[base + 1] = 0f;
+        // Front left -> left, front right -> right (always).
+        coefficients[0] = 1f;
+        coefficients[1 * 2 + 1] = 1f;
 
-            switch (input) {
-                case 0:
-                    coefficients[base] = 1f;
-                    break;
-                case 1:
-                    coefficients[base + 1] = 1f;
-                    break;
-                case 2:
-                    coefficients[base] = centerMix;
-                    coefficients[base + 1] = centerMix;
-                    break;
-                case 4:
-                    coefficients[base] = surroundMix;
-                    break;
-                case 5:
-                    coefficients[base + 1] = surroundMix;
-                    break;
-                case 6:
-                    if (inputChannelCount >= 8) {
-                        coefficients[base] = surroundMix;
-                    }
-                    break;
-                case 7:
-                    if (inputChannelCount >= 8) {
-                        coefficients[base + 1] = surroundMix;
-                    }
-                    break;
-                default:
-                    break;
-            }
+        if (inputChannelCount >= 5) {
+            // 5.0 / 5.1 / 6.1 / 7.1: index 2 is the front center channel.
+            coefficients[2 * 2] = centerMix;
+            coefficients[2 * 2 + 1] = centerMix;
+            // Index 3 (LFE) is dropped; 4 and 5 are back left / back right.
+            coefficients[4 * 2] = surroundMix;
+            coefficients[5 * 2 + 1] = surroundMix;
+        } else if (inputChannelCount == 4) {
+            // Quad: index 2 = back left, index 3 = back right.
+            coefficients[2 * 2] = surroundMix;
+            coefficients[3 * 2 + 1] = surroundMix;
+        }
+        // 3-channel (2.1): index 2 is the LFE channel, dropped by leaving it 0.
+
+        if (inputChannelCount == 7) {
+            // 6.1: index 6 is the back center channel -> both outputs.
+            coefficients[6 * 2] = surroundMix;
+            coefficients[6 * 2 + 1] = surroundMix;
+        } else if (inputChannelCount >= 8) {
+            // 7.1: index 6 = side left, index 7 = side right.
+            coefficients[6 * 2] = surroundMix;
+            coefficients[7 * 2 + 1] = surroundMix;
         }
 
         return new ChannelMixingMatrix(inputChannelCount, 2, coefficients);
