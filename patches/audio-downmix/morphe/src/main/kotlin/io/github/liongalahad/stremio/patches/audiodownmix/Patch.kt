@@ -4,15 +4,27 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.patch.resourcePatch
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import io.github.liongalahad.stremio.patches.shared.Constants.STREMIO_COMPATIBILITY
+import org.w3c.dom.Document
+import org.w3c.dom.Element
 
 private const val BRIDGE = "Lcom/stremio/morphe/AudioDownmixBridge;"
 private const val DOWNMIX_FACTORY = "Lcom/stremio/morphe/DownmixRenderersFactory;"
 private const val CUSTOM_FACTORY = "Lcom/stremio/common/players/subtitles/CustomRenderersFactory;"
+
+private val downmixSettingsResourcePatch = resourcePatch {
+    compatibleWith(STREMIO_COMPATIBILITY)
+
+    execute {
+        document("AndroidManifest.xml").use(::transformManifest)
+        document("res/layout/activity_main.xml").use(::transformMainLayout)
+    }
+}
 
 @Suppress("unused")
 val audioDownmixPatch = bytecodePatch(
@@ -21,6 +33,7 @@ val audioDownmixPatch = bytecodePatch(
     default = true
 ) {
     compatibleWith(STREMIO_COMPATIBILITY)
+    dependsOn(downmixSettingsResourcePatch)
     extendWith("extensions/stremio.mpe")
 
     execute {
@@ -78,4 +91,26 @@ val audioDownmixPatch = bytecodePatch(
             )
         }
     }
+}
+
+private fun transformManifest(document: Document) {
+    val application = document.getElementsByTagName("application").item(0) as? Element
+        ?: return
+    application.appendChild(document.createElement("activity").apply {
+        setAttribute("android:name", "com.stremio.morphe.DownmixSettingsActivity")
+        setAttribute("android:exported", "false")
+        setAttribute("android:screenOrientation", "landscape")
+        setAttribute("android:theme", "@android:style/Theme.Material.NoActionBar")
+    })
+}
+
+private fun transformMainLayout(document: Document) {
+    val root = document.documentElement ?: return
+    root.appendChild(document.createElement("com.stremio.morphe.MorpheDownmixNavView").apply {
+        setAttribute("android:layout_width", "160dp")
+        setAttribute("android:layout_height", "48dp")
+        setAttribute("android:layout_gravity", "start|top")
+        setAttribute("android:layout_marginStart", "20dp")
+        setAttribute("android:layout_marginTop", "140dp")
+    })
 }

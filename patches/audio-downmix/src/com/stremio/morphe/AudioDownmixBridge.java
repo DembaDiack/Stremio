@@ -1,5 +1,8 @@
 package com.stremio.morphe;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.media3.common.audio.AudioProcessor;
 import androidx.media3.common.audio.ChannelMixingAudioProcessor;
 import androidx.media3.common.audio.ChannelMixingMatrix;
@@ -7,14 +10,51 @@ import androidx.media3.common.audio.ChannelMixingMatrix;
 import java.util.List;
 
 public final class AudioDownmixBridge {
+    private static final String PREFS = "morphe_downmix";
+    private static final String KEY_ENABLED = "enabled";
+    private static final String KEY_CENTER_BOOST_DB = "center_boost_db";
+
     private static final float SURROUND_MIX = 0.707107f;
     private static final int DEFAULT_CENTER_BOOST_DB = 20;
+
+    private static Context appContext;
 
     private AudioDownmixBridge() {
     }
 
+    /** Records the application context so runtime preferences can be read. */
+    public static void init(Context context) {
+        if (context != null) {
+            appContext = context.getApplicationContext();
+        }
+    }
+
+    public static boolean isEnabled() {
+        return appContext == null || prefs().getBoolean(KEY_ENABLED, true);
+    }
+
+    public static void setEnabled(boolean enabled) {
+        if (appContext == null) return;
+        prefs().edit().putBoolean(KEY_ENABLED, enabled).apply();
+    }
+
+    public static int getCenterBoostDb() {
+        return appContext == null
+                ? DEFAULT_CENTER_BOOST_DB
+                : prefs().getInt(KEY_CENTER_BOOST_DB, DEFAULT_CENTER_BOOST_DB);
+    }
+
+    public static void setCenterBoostDb(int centerBoostDb) {
+        if (appContext == null) return;
+        prefs().edit().putInt(KEY_CENTER_BOOST_DB, centerBoostDb).apply();
+    }
+
+    private static SharedPreferences prefs() {
+        return appContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+    }
+
     public static ChannelMixingAudioProcessor createDownmixProcessor() {
-        return createDownmixProcessor(DEFAULT_CENTER_BOOST_DB);
+        return createDownmixProcessor(getCenterBoostDb());
     }
 
     public static ChannelMixingAudioProcessor createDownmixProcessor(int centerBoostDb) {
@@ -28,7 +68,7 @@ public final class AudioDownmixBridge {
     }
 
     public static void appendVlcDownmixOptions(List<String> options) {
-        if (options == null) {
+        if (options == null || !isEnabled()) {
             return;
         }
 

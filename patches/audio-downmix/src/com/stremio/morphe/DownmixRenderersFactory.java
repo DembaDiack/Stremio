@@ -12,6 +12,7 @@ import com.stremio.common.players.subtitles.CustomRenderersFactory;
 public final class DownmixRenderersFactory extends CustomRenderersFactory {
     public DownmixRenderersFactory(Context context) {
         super(context);
+        AudioDownmixBridge.init(context);
     }
 
     @Override
@@ -20,6 +21,10 @@ public final class DownmixRenderersFactory extends CustomRenderersFactory {
             boolean enableFloatOutput,
             boolean enableAudioTrackPlaybackParams
     ) {
+        if (!AudioDownmixBridge.isEnabled()) {
+            return super.buildAudioSink(context, enableFloatOutput, enableAudioTrackPlaybackParams);
+        }
+
         ChannelMixingAudioProcessor processor = AudioDownmixBridge.createDownmixProcessor();
 
         return new DefaultAudioSink.Builder(context)
