@@ -13,3 +13,4 @@ Current modules:
 - `multi-account/` owns the chooser diff, original Java source, APK augmentation hook, diagnostics, design notes, and device test results.
 - `addon-reordering/` owns the add-on ordering diff, original Java source, APK augmentation hook, and interaction test evidence.
 - `side-by-side-installation/` owns the install-identity diff and its application hook.
+- `audio-downmix/` owns ExoPlayer/libVLC stereo downmix hooks, runtime audio helpers, and Morphe fingerprints.

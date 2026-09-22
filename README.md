@@ -16,13 +16,13 @@ The suite adds a default-selected side-by-side identity, a local multi-account c
 ## Install in Morphe Manager
 
 1. Download and install [Morphe Manager](https://morphe.software/) on your phone or TV.
-2. Add `github.com/liongalahad/stremio-androidTV-morphe-patches` as a GitHub patch source. No GitHub PAT is required because the repository is public.
+2. Add `github.com/DembaDiack/Stremio` as a GitHub patch source. No GitHub PAT is required because the repository is public.
 3. Enable prerelease patches while the bundle remains on `dev`.
 4. Import the official Stremio Android TV 1.10.4 APK for the target ABI.
 5. Select the patches to apply. All three are enabled by default. `Side-by-side installation` produces package `com.stremio.morphe` with label `Stremio Morphe`; deselect it only when replacement-install behavior is intended.
 6. Save the patched APK locally, then sideload and install it on your TV. The default side-by-side output installs beside official Stremio. A replacement output cannot upgrade the official app in place because the patched APK has a different signature.
 
-Deep link: `https://morphe.software/add-source?github=liongalahad/stremio-androidTV-morphe-patches`
+Deep link: `https://morphe.software/add-source?github=DembaDiack/Stremio`
 
 ## Local workflow
 

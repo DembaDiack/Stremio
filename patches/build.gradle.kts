@@ -6,10 +6,10 @@ patches {
     about {
         name = "Stremio Morphe Patches"
         description = "Morphe patches for the official Stremio Android TV application"
-        source = "https://github.com/liongalahad/stremio-androidTV-morphe-patches"
-        author = "liongalahad"
-        contact = "https://github.com/liongalahad/stremio-androidTV-morphe-patches/issues"
-        website = "https://github.com/liongalahad/stremio-androidTV-morphe-patches"
+        source = "https://github.com/DembaDiack/Stremio"
+        author = "DembaDiack"
+        contact = "https://github.com/DembaDiack/Stremio/issues"
+        website = "https://github.com/DembaDiack/Stremio"
         license = "GPLv3"
     }
 }
@@ -23,7 +23,8 @@ kotlin {
             "src/main/kotlin",
             "multi-account/morphe/src/main/kotlin",
             "addon-reordering/morphe/src/main/kotlin",
-            "side-by-side-installation/morphe/src/main/kotlin"
+            "side-by-side-installation/morphe/src/main/kotlin",
+            "audio-downmix/morphe/src/main/kotlin"
         )
     }
 }

@@ -17,6 +17,12 @@
 # The Gradle wrapper is source-controlled even though other JARs are not.
 !gradle/wrapper/gradle-wrapper.jar
 
+# Decoded APK contents, analysis artifacts, and heavy local tools must never be committed.
+/.apk-analysis/
+/.apk-extract/
+/androguard.db
+/tools/jadx/
+
 # Local Morphe builds, patched APKs, and test evidence stay outside Git.
 /local/
 

@@ -1,0 +1,6 @@
+{
+  "id": "audio-downmix",
+  "order": 120,
+  "apply": "apply.ps1",
+  "augment": "augment.ps1"
+}
