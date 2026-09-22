@@ -1,21 +1,16 @@
 package io.github.liongalahad.stremio.patches.audiodownmix
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
-import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
-import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.removeInstructions
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
-import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
-import com.android.tools.smali.dexlib2.iface.reference.TypeReference
 import io.github.liongalahad.stremio.patches.shared.Constants.STREMIO_COMPATIBILITY
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
 private const val BRIDGE = "Lcom/stremio/morphe/AudioDownmixBridge;"
-private const val DOWNMIX_FACTORY = "Lcom/stremio/morphe/DownmixRenderersFactory;"
-private const val CUSTOM_FACTORY = "Lcom/stremio/common/players/subtitles/CustomRenderersFactory;"
 
 private val downmixSettingsResourcePatch = resourcePatch {
     compatibleWith(STREMIO_COMPATIBILITY)
@@ -39,32 +34,28 @@ val audioDownmixPatch = bytecodePatch(
     execute {
         listOf(
             ExoPlayerCreateFingerprint,
-            VlcOptionsFingerprint
+            VlcOptionsFingerprint,
+            DefaultRenderersFactoryBuildAudioSinkFingerprint
         ).forEach { it.matchAll(1..1) }
 
-        ExoPlayerCreateFingerprint.method.apply {
-            implementation!!.instructions.withIndex().forEach { (index, instruction) ->
-                val reference = (instruction as? ReferenceInstruction)?.reference
-                    ?: return@forEach
-                when (reference) {
-                    is TypeReference -> {
-                        if (reference.type == CUSTOM_FACTORY) {
-                            val register = getInstruction<OneRegisterInstruction>(index).registerA
-                            replaceInstruction(index, "new-instance v$register, $DOWNMIX_FACTORY")
-                        }
-                    }
-                    is MethodReference -> {
-                        if (reference.definingClass == CUSTOM_FACTORY && reference.name == "<init>") {
-                            replaceInstruction(
-                                index,
-                                "invoke-direct { v8, v11 }, $DOWNMIX_FACTORY-><init>(Landroid/content/Context;)V"
-                            )
-                        }
-                    }
-                    else -> Unit
-                }
-            }
+        // Replace DefaultRenderersFactory.buildAudioSink (the inherited method that
+        // constructs the audio sink) with a delegation to the bridge. Subclassing
+        // CustomRenderersFactory is impossible because it is a final Kotlin class.
+        DefaultRenderersFactoryBuildAudioSinkFingerprint.method.apply {
+            val instructionCount = implementation!!.instructions.size
+            implementation!!.removeInstructions(0, instructionCount)
+            addInstructions(
+                0,
+                """
+                    invoke-static { p1, p2, p3 }, $BRIDGE->buildAudioSink(Landroid/content/Context;ZZ)Landroidx/media3/exoplayer/audio/AudioSink;
+                    move-result-object v0
+                    return-object v0
+                """
+            )
+        }
 
+        // Disable tunnelled playback so the downmix processor always applies.
+        ExoPlayerCreateFingerprint.method.apply {
             val tunnelingCallIndex = implementation!!.instructions.indexOfFirst { instruction ->
                 val reference = (instruction as? ReferenceInstruction)?.reference as? MethodReference
                     ?: return@indexOfFirst false

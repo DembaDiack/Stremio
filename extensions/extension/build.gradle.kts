@@ -15,8 +15,7 @@ android {
             listOf(
                 "../../patches/multi-account/src",
                 "../../patches/addon-reordering/src",
-                "../../patches/audio-downmix/src",
-                "../../patches/audio-downmix/compile-stubs"
+                "../../patches/audio-downmix/src"
             )
         )
     }

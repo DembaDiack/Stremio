@@ -27,3 +27,16 @@ internal object VlcOptionsFingerprint : Fingerprint(
             method.parameters().isEmpty()
     }
 )
+
+internal object DefaultRenderersFactoryBuildAudioSinkFingerprint : Fingerprint(
+    returnType = "Landroidx/media3/exoplayer/audio/AudioSink;",
+    custom = { method, classDef ->
+        classDef.type == "Landroidx/media3/exoplayer/DefaultRenderersFactory;" &&
+            method.name == "buildAudioSink" &&
+            method.parameters() == listOf(
+                "Landroid/content/Context;",
+                "Z",
+                "Z"
+            )
+    }
+)

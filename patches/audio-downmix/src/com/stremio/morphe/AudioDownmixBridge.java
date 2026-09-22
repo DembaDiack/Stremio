@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import androidx.media3.common.audio.AudioProcessor;
 import androidx.media3.common.audio.ChannelMixingAudioProcessor;
 import androidx.media3.common.audio.ChannelMixingMatrix;
+import androidx.media3.exoplayer.audio.AudioSink;
+import androidx.media3.exoplayer.audio.DefaultAudioSink;
 
 import java.util.List;
 
@@ -65,6 +67,26 @@ public final class AudioDownmixBridge {
         processor.putChannelMixingMatrix(buildMatrix(8, centerMix, SURROUND_MIX));
 
         return processor;
+    }
+
+    /**
+     * Builds the ExoPlayer audio sink, injecting the downmix processor when the
+     * runtime preference is enabled. Only uses media3 APIs that exist in the
+     * APK's bundled media3 version so it survives DEX verification.
+     */
+    public static AudioSink buildAudioSink(
+            Context context,
+            boolean enableFloatOutput,
+            boolean enableAudioTrackPlaybackParams
+    ) {
+        init(context);
+
+        DefaultAudioSink.Builder builder = new DefaultAudioSink.Builder(context)
+                .setEnableFloatOutput(enableFloatOutput);
+        if (isEnabled()) {
+            builder.setAudioProcessors(createDownmixProcessor());
+        }
+        return builder.build();
     }
 
     public static void appendVlcDownmixOptions(List<String> options) {
