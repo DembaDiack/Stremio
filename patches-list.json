@@ -1,6 +1,6 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "1.0.0-dev.1",
+  "version": "1.0.0-dev.2",
   "patches": [
     {
       "name": "Addon reordering",
@@ -39,7 +39,9 @@
       "name": "Force stereo downmix with center boost",
       "description": "Downmixes multichannel audio to stereo and boosts the center channel for clearer dialogue on 2.0 speakers. Applies to ExoPlayer and libVLC.",
       "default": true,
-      "dependencies": [],
+      "dependencies": [
+        "ResourcePatch"
+      ],
       "compatiblePackages": [
         {
           "packageName": "com.stremio.one",

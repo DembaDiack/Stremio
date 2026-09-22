@@ -1,3 +1,9 @@
+## [1.0.0-dev.2](https://github.com/DembaDiack/Stremio/compare/v1.0.0-dev.1...v1.0.0-dev.2) (2026-09-22)
+
+### ✨ New Features
+
+* add runtime downmix settings with in-app toggle ([b50f8ab](https://github.com/DembaDiack/Stremio/commit/b50f8ab20abdaf7c0d7e9e2158c49c2d36e3aa1c))
+
 ## 1.0.0-dev.1 (2026-09-22)
 
 ### 🐛 Bug Fixes
