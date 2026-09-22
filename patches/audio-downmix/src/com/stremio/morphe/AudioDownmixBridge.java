@@ -84,7 +84,7 @@ public final class AudioDownmixBridge {
         DefaultAudioSink.Builder builder = new DefaultAudioSink.Builder(context)
                 .setEnableFloatOutput(enableFloatOutput);
         if (isEnabled()) {
-            builder.setAudioProcessors(createDownmixProcessor());
+            builder.setAudioProcessors(new AudioProcessor[] { createDownmixProcessor() });
         }
         return builder.build();
     }
